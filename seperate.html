@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App - Add Todo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: whitesmoke;
+            background: linear-gradient(to right, black, silver);
+            background-size: cover;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-repeat: no-repeat;
+        }
+
+        nav {
+            text-align: center; 
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: antiquewhite;
+            text-decoration: none;
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+        }
+
+        nav button {
+            padding: 10px 15px;
+            background-color: transparent;
+            color: black;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: grey;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            animation: slideFromLeft 1.5s ease-out;
+        }
+
+        .todo-form, .search-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .todo-form input, .todo-form select, .search-section input, .search-section select {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 45%; 
+        }
+
+        .todo-form button, .clear-all-btn {
+            padding: 10px 15px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .todo-form button:hover, .clear-all-btn:hover {
+            background-color: darkgreen;
+        }
+
+        .todo-list {
+            margin-bottom: 20px;
+        }
+
+        .todo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .todo-item.complete {
+            background-color: #d4edda;
+        }
+
+        .todo-item.incomplete {
+            background-color: #f8d7da;
+        }
+
+        .delete-btn {
+            background-color: maroon;
+            color: white;
+            border: none;
+            padding: 2px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background-color: maroon;
+        }
+
+        .clear-all-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .clear-all-btn:hover {
+            background-color: darkblue;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .todo-form input, .todo-form select, .todo-form button,
+            .search-section input, .search-section select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            nav {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .todo-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .todo-form input, .todo-form select {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .todo-form button {
+                width: 100%;
+            }
+        }
+
+        @keyframes slideFromLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <button><a href="seperate.html">Home</a></button>
+        <button><a href="search.html">Search Tasks</a></button>
+    </nav>
+        
+    <div class="container">
+        <h1>Todo App</h1>
+        <div class="todo-form">
+            <input type="text" id="todoName" placeholder="Enter Todo name" required>
+            <select id="todoStatus">
+                <option value="nooption">select status</option>
+                <option value="incomplete">Incomplete</option>
+                <option value="complete">Complete</option>
+            </select>
+            <button onclick="addTodo()">Add Todo</button>
+        </div>
+      
+        <div class="todo-list" id="todoList">
+            
+        </div>
+        <button class="clear-all-btn" onclick="clearAllTodos()">Clear All</button>   
+    </div>
+    
+    <script>
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            loadTodos();
+        });
+
+        
+        function loadTodos() {
+            const todos = JSON.parse(localStorage.getItem("todos")) || [];
+            displayTodos(todos);
+        }
+
+       
+        function addTodo() {
+            const todoName = document.getElementById("todoName").value;
+            const todoStatus = document.getElementById("todoStatus").value;
+
+            if (todoName.trim() === "") {
+                alert("Please enter a valid Todo name.");
+                return;
+            }
+
+            const todo = {
+                name: todoName,
+                status: todoStatus,
+            };
+
+            let todos = JSON.parse(localStorage.getItem("todos")) || [];
+            todos.push(todo);
+            localStorage.setItem("todos", JSON.stringify(todos));
+
+            document.getElementById("todoName").value = ""; 
+            displayTodos(todos); 
+        }
+
+        
+        function displayTodos(todos) {
+            const todoList = document.getElementById("todoList");
+            todoList.innerHTML = ""; 
+
+            todos.forEach((todo, index) => {
+                const todoItem = document.createElement("div");
+                todoItem.className = `todo-item ${todo.status}`;
+                todoItem.innerHTML = `
+                    <span>${todo.name}</span>
+                    <button class="delete-btn" onclick="deleteTodo(${index})">Delete</button>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        }
+
+        
+        function deleteTodo(index) {
+            let todos = JSON.parse(localStorage.getItem("todos")) || [];
+            todos.splice(index, 1);
+            localStorage.setItem("todos", JSON.stringify(todos));
+            displayTodos(todos);
+        }
+
+        
+        function clearAllTodos() {
+            localStorage.removeItem("todos");
+            displayTodos([]);
+        }
+    </script>
+</body>
+</html>

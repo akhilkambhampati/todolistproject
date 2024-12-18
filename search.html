@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App - Search Todo</title>
+    <style>
+     .search-section {
+    display: flex;
+    border-radius: 8px ;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    
+   
+}
+
+.search-section input, .search-section select {
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid maroon;
+    border-radius: 6px;
+    width: 40%;
+}  
+h1{
+    text-align: center;
+    border: 4px solid whitesmoke;
+    padding: 2px;
+    text-decoration: double;
+    background-color: whitesmoke;
+}
+nav{
+            text-align: center;
+            display: block; 
+             border-radius: 8px; 
+            border: 15px,solid white(255, 255, 255);
+            padding:20px;
+            margin:25px;
+            background-color: whitesmoke;
+            
+            
+}
+body{
+    background: linear-gradient(to right, black, silver);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.container {
+    width: 90%;
+    max-width: 600px;
+    background-color: grey;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-left: 250px;
+    margin-bottom: 150px;
+}
+@media (max-width: 768px) {
+        .search-section {
+            flex-direction: column;
+            align-items: center;  
+        }
+
+        .search-section input, .search-section select {
+            width: 80%;  
+            margin-bottom: 10px;  
+        }
+
+        nav {
+            font-size: 14px;  
+            padding: 15px;
+        }
+
+        .container {
+            width: 100%;  
+            padding: 15px;  
+        }
+
+        h1 {
+            font-size: 24px;  
+        }
+    }
+
+    @media (max-width: 480px) {
+        .search-section input, .search-section select {
+            width: 90%;  
+        }
+
+        nav {
+            padding: 10px;  
+        }
+
+        .container {
+            margin-bottom: 100px;  
+        }
+    }
+    @keyframes slideFromLeft {
+    from {
+        transform: translateX(-100%); 
+        opacity: 0; 
+    }
+    to {
+        transform: translateX(0); 
+        opacity: 1; 
+    }
+}
+
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    animation: slideFromLeft 1.5s ease-out; 
+}
+    </style>
+</head>
+<body>
+    
+    
+    <h2>
+        <nav>
+           <button> <a href="seperate.html">Home</a> </button>
+            <button> <a href="search.html">Search Tasks</a></button>
+            
+            
+        </nav></h2>
+
+    <div>
+    <div class="container">
+        <h1>Search Todo</h1>
+        
+        
+        <div class="search-section">
+            <input type="text" id="searchName" placeholder="Search by Todo name" oninput="searchTodos()">
+            <select id="searchStatus" onchange="searchTodos()">
+                <option value="">All Status</option>
+                <option value="complete">Complete</option>
+                <option value="incomplete">Incomplete</option>
+            </select>
+        </div>
+
+        
+        <div class="todo-list" id="todoList">
+           
+        </div>
+
+        <br><br>
+
+        
+    </div>
+</div>
+
+    <script >
+       
+function searchTodos() {
+    const searchName = document.getElementById("searchName").value.toLowerCase();
+    const searchStatus = document.getElementById("searchStatus").value;
+
+    let todos = JSON.parse(localStorage.getItem("todos")) || [];
+    todos = todos.filter(todo => {
+        const nameMatch = todo.name.toLowerCase().includes(searchName);
+        const statusMatch = searchStatus ? todo.status === searchStatus : true;
+        return nameMatch && statusMatch;
+    });
+
+    displayTodos(todos);
+} 
+    </script>
+</body>
+</html>
